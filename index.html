@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Reseller Panel - FIRENETX</title>
+    <style>
+        /* Estilos generales y reset */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f4f6f9;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Barra lateral (Sidebar) */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-size: 22px;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            transition: background 0.3s;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background-color: #34495e;
+            color: white;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        .content h1 {
+            color: #333;
+            margin-top: 0;
+        }
+
+        /* Tarjetas de formulario (Cards) */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        /* Botones */
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Alertas de Notificación */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+            font-weight: bold;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Botón especial para AppCreator24 */
+        .app-link {
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .app-link:hover {
+            background-color: #219653;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegación Lateral -->
+    <div class="sidebar">
+        <h2>Panel Maestro</h2>
+        <ul>
+            <li><a href="#" class="active">Panel Principal</a></li>
+            <li><a href="#">Gestión de Usuarios</a></li>
+            <li><a href="#">Gestión de Resellers</a></li>
+            <li><a href="#">Facturación y Créditos</a></li>
+            <li><a href="#">Configuración</a></li>
+        </ul>
+    </div>
+
+    <!-- Área de Trabajo -->
+    <div class="content">
+        <h1>Dashboard - Administración FIRENETX</h1>
+
+        <!-- Mensajes de Estado -->
+        <div id="status-alert" class="alert"></div>
+
+        <!-- Sección: Crear Usuario (Línea) -->
+        <div class="card">
+            <h3>Crear Nuevo Usuario / Código de Acceso</h3>
+            <form id="user-form">
+                <div class="form-group">
+                    <label for="username">Usuario (Nombre de Cliente)</label>
+                    <input type="text" id="username" placeholder="Ej. Cliente Juan" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="Contraseña de cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="access_code">Código de Acceso (6 caracteres - Déjalo vacío para auto-generar)</label>
+                    <input type="text" id="access_code" placeholder="Ej. A4B7X9" maxlength="6" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="package">Asignación de Paquete</label>
+                    <select id="package">
+                        <option value="trial">Prueba (2 Horas)</option>
+                        <option value="1M">1 Mes - 1 Crédito</option>
+                        <option value="3M">3 Meses - 3 Créditos</option>
+                        <option value="6M">6 Meses - 6 Créditos</option>
+                        <option value="12M">12 Meses - 12 Créditos</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Guardar y Activar Código en Firebase</button>
+            </form>
+        </div>
+
+        <!-- Sección: Crear Reseller -->
+        <div class="card">
+            <h3>Crear Sub-Panel de Reseller (Revendedor)</h3>
+            <form id="reseller-form">
+                <div class="form-group">
+                    <label for="reseller_user">Usuario Reseller</label>
+                    <input type="text" id="reseller_user" placeholder="Usuario de acceso para el reseller" required>
+                </div>
+                <div class="form-group">
+                    <label for="reseller_pass">Contraseña Reseller</label>
+                    <input type="password" id="reseller_pass" placeholder="Contraseña de acceso" required>
+                </div>
+                <div class="form-group">
+                    <label for="credits">Créditos Iniciales a Asignar</label>
+                    <input type="number" id="credits" placeholder="Ej. 50" min="0" required>
+                </div>
+                <button type="submit" class="btn">Crear Cuenta Reseller</button>
+            </form>
+        </div>
+
+        <!-- Sección: Integración AppCreator24 -->
+        <div class="card">
+            <h3>Integración con Aplicación (AppCreator24)</h3>
+            <p>Este botón utiliza la sintaxis especial para abrir una sección interna de tu app configurada en AppCreator24 (Sección <strong>S123</strong>).</p>
+            <a href="go:S123" class="app-link">Abrir sección</a>
+        </div>
+
+    </div>
+
+    <!-- Módulos SDK de Firebase (Importación CDN para Web) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Configuración de tu Proyecto FIRENETX
+        const firebaseConfig = {
+            apiKey: "AIzaSyBb-eVT0dxhurMEeANigq8KYOCJJslVbCA",
+            authDomain: "firenetx-9e437.firebaseapp.com",
+            databaseURL: "https://firenetx-9e437-default-rtdb.firebaseio.com",
+            projectId: "firenetx-9e437",
+            storageBucket: "firenetx-9e437.firebasestorage.app",
+            messagingSenderId: "735419581804",
+            appId: "1:735419581804:web:206720923707deb9281f49",
+            measurementId: "G-32Q5YTS9Z5"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Función auxiliar para mostrar alertas en pantalla
+        function showAlert(message, isError = false) {
+            const alertBox = document.getElementById('status-alert');
+            alertBox.style.display = 'block';
+            alertBox.className = `alert ${isError ? 'alert-error' : 'alert-success'}`;
+            alertBox.innerHTML = message;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Función para generar un código alfanumérico aleatorio de 6 dígitos
+        function generateRandomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluimos caracteres confusos como O, 0, I, 1
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Función para calcular milisegundos de expiración
+        function getExpirationTime(packageType) {
+            const now = new Date();
+            switch(packageType) {
+                case 'trial':
+                    return now.getTime() + (2 * 60 * 60 * 1000); // +2 Horas
+                case '1M':
+                    return now.setDate(now.getDate() + 30); // +30 Días
+                case '3M':
+                    return now.setDate(now.getDate() + 90); // +90 Días
+                case '6M':
+                    return now.setDate(now.getDate() + 180); // +180 Días
+                case '12M':
+                    return now.setDate(now.getDate() + 365); // +365 Días
+                default:
+                    return now.setDate(now.getDate() + 30);
+            }
+        }
+
+        // Guardar Usuario / Código
+        document.getElementById('user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            let accessCode = document.getElementById('access_code').value.trim().toUpperCase();
+            const packageSelected = document.getElementById('package').value;
+
+            // Si no introdujo un código, generamos uno de 6 dígitos
+            if (!accessCode) {
+                accessCode = generateRandomCode();
+            }
+
+            const expiresAt = getExpirationTime(packageSelected);
+
+            try {
+                // Guardar directamente en la base de datos de Firebase bajo la rama /codes/
+                await set(ref(db, 'codes/' + accessCode), {
+                    username: username,
+                    password: password,
+                    package: packageSelected,
+                    createdAt: new Date().toISOString(),
+                    expiresAt: expiresAt,
+                    active: true
+                });
+
+                showAlert(`¡Código guardado con éxito!<br>🔑 <strong>CÓDIGO DE ACCESO:</strong> ${accessCode}<br>📅 <strong>Vence:</strong> ${new Date(expiresAt).toLocaleString()}`);
+                
+                // Limpiar formulario
+                document.getElementById('user-form').reset();
+
+            } catch (error) {
+                console.error("Error al guardar en Firebase:", error);
+                showAlert(`Error al guardar en la base de datos: ${error.message}`, true);
+            }
+        });
+
+        // Guardar Reseller
+        document.getElementById('reseller-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const resellerUser = document.getElementById('reseller_user').value.trim();
+            const resellerPass = document.getElementById('reseller_pass').value.trim();
+            const credits = parseInt(document.getElementById('credits').value, 10);
+
+            try {
+                await set(ref(db, 'resellers/' + resellerUser), {
+                    password: resellerPass,
+                    credits: credits,
+                    createdAt: new Date().toISOString()
+                });
+
+                showAlert(`¡Reseller <strong>${resellerUser}</strong> creado con exito con ${credits} créditos!`);
+                document.getElementById('reseller-form').reset();
+
+            } catch (error) {
+                console.error("Error al crear reseller:", error);
+                showAlert(`Error al crear reseller: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
