@@ -21,6 +21,7 @@
             --success: #2ecc71;
             --danger: #e74c3c;
             --warning: #f1c40f;
+            --info: #00bcd4;
             --white: #ffffff;
             --border-radius: 10px;
         }
@@ -206,6 +207,15 @@
         .btn-full { width: 100%; }
         .btn-success { background-color: var(--success); }
         .btn-success:hover { background-color: #27ae60; }
+        
+        /* Botones de acción pequeña */
+        .btn-sm { padding: 6px 12px; font-size: 13px; gap: 5px; margin-right: 5px; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #c0392b; }
+        .btn-warning { background-color: var(--warning); color: #000; }
+        .btn-warning:hover { background-color: #f39c12; color: #fff; }
+        .btn-info { background-color: var(--info); }
+        .btn-info:hover { background-color: #0097a7; }
 
         /* Alertas */
         .alert {
@@ -215,7 +225,7 @@
         .alert-success { background-color: #e8f8f5; color: #117a65; border-color: var(--success); }
         .alert-error { background-color: #fdedec; color: #c0392b; border-color: var(--danger); }
         
-        /* Tablas de Clientes */
+        /* Tablas */
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
@@ -236,6 +246,25 @@
         .bg-blue { background: var(--primary-color); }
         .bg-green { background: var(--success); }
         .bg-yellow { background: var(--warning); }
+
+        /* ----- MODALES ----- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--white); padding: 30px; border-radius: 15px;
+            width: 100%; max-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            position: relative; animation: fadeIn 0.3s ease;
+        }
+        .modal-header { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-header h3 { margin: 0; color: var(--dark-bg); }
+        .btn-close-modal {
+            position: absolute; top: 20px; right: 20px; font-size: 20px;
+            color: var(--text-muted); cursor: pointer; border: none; background: none;
+        }
+        .btn-close-modal:hover { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -262,7 +291,7 @@
         </div>
     </div>
 
-    <!-- ================= APLICACIÓN PRINCIPAL (Oculta hasta login) ================= -->
+    <!-- ================= APLICACIÓN PRINCIPAL ================= -->
     <div id="app-view" style="display: none; width: 100%;">
         
         <!-- BARRA LATERAL -->
@@ -321,7 +350,7 @@
                         <div class="card-header">
                             <h3>Bienvenido al Panel FIRENETX</h3>
                         </div>
-                        <p>Selecciona una opción en el menú lateral para comenzar a gestionar tus códigos y clientes. Recuerda que cada vez que generes un código mayor a una prueba, se descontarán créditos de tu saldo si eres un Reseller.</p>
+                        <p>Selecciona una opción en el menú lateral para comenzar a gestionar tus códigos y clientes. Recuerda que cada vez que generes un código o extiendas un periodo mayor a una prueba, se descontarán créditos de tu saldo si eres un Reseller.</p>
                     </div>
                 </div>
 
@@ -345,7 +374,7 @@
                             <div class="row">
                                 <div class="col form-group">
                                     <label for="access_code">Código de Acceso <small>(Dejar en blanco para auto-generar)</small></label>
-                                    <input type="text" id="access_code" class="form-control" placeholder="Ej. A4B7X9" maxlength="6" style="text-transform: uppercase;">
+                                    <input type="text" id="access_code" class="form-control" placeholder="Ej. A4B7X9" maxlength="10" style="text-transform: uppercase;">
                                 </div>
                                 <div class="col form-group">
                                     <label for="package">Paquete y Duración</label>
@@ -384,23 +413,23 @@
                                         <th>Paquete</th>
                                         <th>Vencimiento</th>
                                         <th>Estado</th>
+                                        <th style="min-width: 120px;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td colspan="6" style="text-align: center;">Cargando clientes...</td></tr>
+                                    <tr><td colspan="7" style="text-align: center;">Cargando clientes...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- VISTA: CREAR RESELLER (Solo Admin) -->
+                <!-- VISTA: CREAR RESELLER Y GESTION (Solo Admin) -->
                 <div id="view-create-reseller" class="view-section">
                     <div class="card">
                         <div class="card-header">
-                            <h3>Crear / Actualizar Panel de Reseller</h3>
+                            <h3>Crear Panel de Reseller</h3>
                         </div>
-                        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Los Resellers pueden iniciar sesión en este mismo panel con correo y contraseña. Usa este formulario para crear uno nuevo de manera segura.</p>
                         <form id="reseller-form">
                             <div class="row">
                                 <div class="col form-group">
@@ -414,7 +443,7 @@
                             </div>
                             <div class="row">
                                 <div class="col form-group">
-                                    <label for="credits">Créditos a Asignar</label>
+                                    <label for="credits">Créditos a Asignar Inicialmente</label>
                                     <input type="number" id="credits" class="form-control" placeholder="Ej. 50" min="0" required>
                                 </div>
                             </div>
@@ -422,6 +451,32 @@
                                 <i class="fas fa-user-tie"></i> Crear Cuenta Reseller
                             </button>
                         </form>
+                    </div>
+
+                    <!-- TABLA DE GESTIÓN DE RESELLERS -->
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Gestión de Resellers</h3>
+                            <button class="btn btn-success" id="btn-refresh-resellers" style="padding: 8px 15px; font-size: 13px;" onclick="loadResellersData()">
+                                <i class="fas fa-sync-alt"></i> Actualizar
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="resellers-table">
+                                <thead>
+                                    <tr>
+                                        <th>Correo (Usuario)</th>
+                                        <th>Contraseña</th>
+                                        <th>Créditos Actuales</th>
+                                        <th>Fecha de Creación</th>
+                                        <th style="min-width: 150px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="5" style="text-align: center;">Cargando resellers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -433,24 +488,109 @@
                         </div>
                         <div style="text-align: center; padding: 30px;">
                             <i class="fas fa-mobile-alt fa-4x" style="color: var(--primary-color); margin-bottom: 20px;"></i>
-                            <p style="font-size: 16px;">Este botón utiliza la sintaxis especial para abrir una sección interna de tu app configurada en AppCreator24 (Sección <strong>S123</strong>).</p>
+                            <p style="font-size: 16px;">Este botón utiliza la sintaxis especial para abrir una sección interna de tu app configurada en AppCreator24.</p>
                             <a href="go:S123" class="btn btn-success" style="margin-top: 15px;">
                                 <i class="fas fa-external-link-alt"></i> Abrir sección en la App
                             </a>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
+
+        <!-- ================= MODALES DE EDICIÓN ================= -->
+        
+        <!-- Modal Editar Cliente -->
+        <div class="modal-overlay" id="modal-edit-client">
+            <div class="modal-content">
+                <button class="btn-close-modal" onclick="closeModal('modal-edit-client')"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <h3>Editar Cliente</h3>
+                </div>
+                <form id="form-edit-client">
+                    <input type="hidden" id="edit-client-old-code">
+                    <input type="hidden" id="edit-client-expiresAt">
+                    <div class="form-group">
+                        <label>Código de Acceso</label>
+                        <input type="text" id="edit-client-code" class="form-control" style="text-transform: uppercase;" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre del Cliente</label>
+                        <input type="text" id="edit-client-username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="text" id="edit-client-password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Extender Periodo (Consume Créditos)</label>
+                        <select id="edit-client-extend" class="form-control">
+                            <option value="none" data-cost="0">Sin Cambios (Mantener fecha actual)</option>
+                            <option value="1M" data-cost="1">Sumar 1 Mes (Costo: 1 Crédito)</option>
+                            <option value="3M" data-cost="3">Sumar 3 Meses (Costo: 3 Créditos)</option>
+                            <option value="6M" data-cost="6">Sumar 6 Meses (Costo: 6 Créditos)</option>
+                            <option value="12M" data-cost="12">Sumar 12 Meses (Costo: 12 Créditos)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info btn-full"><i class="fas fa-save"></i> Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Editar Reseller (Contraseña) -->
+        <div class="modal-overlay" id="modal-edit-reseller">
+            <div class="modal-content">
+                <button class="btn-close-modal" onclick="closeModal('modal-edit-reseller')"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <h3>Editar Reseller</h3>
+                </div>
+                <form id="form-edit-reseller">
+                    <input type="hidden" id="edit-reseller-uid">
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Nota: Solo puedes actualizar la contraseña en los registros del sistema. Si el reseller no puede entrar, bórralo y créalo de nuevo.</p>
+                    <div class="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input type="text" id="edit-reseller-password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-info btn-full"><i class="fas fa-save"></i> Actualizar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Gestionar Créditos -->
+        <div class="modal-overlay" id="modal-manage-credits">
+            <div class="modal-content">
+                <button class="btn-close-modal" onclick="closeModal('modal-manage-credits')"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <h3>Gestionar Créditos</h3>
+                </div>
+                <form id="form-manage-credits">
+                    <input type="hidden" id="manage-credits-uid">
+                    <input type="hidden" id="manage-credits-current">
+                    <p>Créditos Actuales: <strong id="display-current-credits" style="color: var(--warning); font-size: 18px;">0</strong></p>
+                    
+                    <div class="form-group">
+                        <label>Acción</label>
+                        <select id="manage-credits-action" class="form-control">
+                            <option value="add">Agregar Créditos (+)</option>
+                            <option value="sub">Restar Créditos (-)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" id="manage-credits-amount" class="form-control" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-full"><i class="fas fa-exchange-alt"></i> Aplicar Cambios</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
-    <!-- ================= MÓDULOS FIREBASE SEGUROS ================= -->
+    <!-- ================= MÓDULOS FIREBASE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        // IMPORTAMOS AUTENTICACIÓN
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, setPersistence, inMemoryPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDqLs4SrHtNh5-vFNwvEJinMBfvquLAs34",
@@ -462,18 +602,35 @@
             appId: "1:560214696693:web:c63bc3603d5a95717c1bbc"
         };
 
-        // App principal
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-
-        // App secundaria (TRUCO: Se usa solo para que el Admin pueda crear resellers sin que Firebase cierre su sesión)
+        
+        // App secundaria para creación segura sin perder la sesión del Admin
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
         let session = { isLogged: false, uid: null, role: null, email: null, credits: 0 };
 
-        // ================= SISTEMA DE LOGIN SEGURO =================
+        // === PERSISTENCIA DE SESIÓN ===
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const snapshot = await get(child(ref(db), `users/${user.uid}`));
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        startSession(userData.role, user.email, userData.credits || 0, user.uid);
+                    }
+                } catch (error) {
+                    console.error("Error al recuperar sesión:", error);
+                }
+            } else {
+                document.getElementById('login-view').style.display = 'flex';
+                document.getElementById('app-view').style.display = 'none';
+            }
+        });
+
+        // ================= SISTEMA DE LOGIN =================
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-login-submit');
@@ -485,22 +642,10 @@
             const alertBox = document.getElementById('login-alert');
 
             try {
-                // 1. Iniciar sesión seguro en los servidores de Google
-                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                const user = userCredential.user;
-
-                // 2. Buscar qué rol y créditos tiene este usuario en la Base de Datos
-                const snapshot = await get(child(ref(db), `users/${user.uid}`));
-                
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    startSession(userData.role, email, userData.credits || 0, user.uid);
-                } else {
-                    throw new Error('Usuario autenticado, pero no tiene perfil en la base de datos.');
-                }
-                        } catch (error) {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
                 alertBox.style.display = 'block';
-                alertBox.innerText = "Error real: " + error.message; // Esto te dirá qué falla exactamente
+                alertBox.innerText = "Error al iniciar sesión: " + error.message; 
                 console.error(error);
                 btn.innerHTML = 'Iniciar Sesión <i class="fas fa-sign-in-alt"></i>';
                 btn.disabled = false;
@@ -520,6 +665,7 @@
                 document.getElementById('menu-resellers').style.display = 'block';
                 document.getElementById('ui-credits-container').style.display = 'none';
                 document.getElementById('widget-credits').style.display = 'none';
+                loadResellersData(); 
             } else {
                 document.getElementById('menu-resellers').style.display = 'none';
                 document.getElementById('ui-credits-container').style.display = 'block';
@@ -538,7 +684,7 @@
             document.getElementById('stat-credits').innerText = session.credits;
         }
 
-        // ================= NAVEGACIÓN (TABS) =================
+        // ================= NAVEGACIÓN =================
         const menuLinks = document.querySelectorAll('.sidebar-menu a');
         const sections = document.querySelectorAll('.view-section');
 
@@ -551,7 +697,9 @@
                 const targetId = 'view-' + link.getAttribute('data-target');
                 sections.forEach(sec => sec.classList.remove('active'));
                 document.getElementById(targetId).classList.add('active');
+                
                 if(targetId === 'view-client-list') loadClientsData();
+                if(targetId === 'view-create-reseller') loadResellersData();
             });
         });
 
@@ -564,8 +712,9 @@
             document.querySelector('.content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function getExpirationTime(packageType) {
-            const now = new Date();
+        // ================= FUNCIONES DE FECHAS =================
+        function getExpirationTime(packageType, baseDate = null) {
+            const now = baseDate ? new Date(baseDate) : new Date();
             switch(packageType) {
                 case 'trial': return now.getTime() + (2 * 60 * 60 * 1000);
                 case '1M': return now.setDate(now.getDate() + 30);
@@ -583,7 +732,7 @@
             return result;
         }
 
-        // GUARDAR USUARIO Y CÓDIGO
+        // ================= CREAR CLIENTE =================
         document.getElementById('user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save-code');
@@ -601,14 +750,19 @@
 
             if (session.role === 'reseller' && session.credits < creditsCost) {
                 showAlert(`No tienes suficientes créditos. Necesitas ${creditsCost}.`, true);
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Generar y Activar';
-                return;
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Generar y Activar'; return;
             }
 
             const expiresAt = getExpirationTime(packageSelected);
 
             try {
+                // Verificar si el código ya existe
+                const snapCode = await get(ref(db, 'codes/' + accessCode));
+                if (snapCode.exists()) {
+                    showAlert("El código de acceso ya existe. Elige otro.", true);
+                    btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Generar y Activar'; return;
+                }
+
                 if (session.role === 'reseller' && creditsCost > 0) {
                     session.credits -= creditsCost;
                     await update(ref(db, `users/${session.uid}`), { credits: session.credits });
@@ -630,57 +784,49 @@
                 loadClientsData();
 
             } catch (error) {
-                showAlert(`Error: No se pudo generar el código. Verifica permisos.`, true);
-                console.error(error);
+                showAlert(`Error al generar el código.`, true);
             }
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-save"></i> Generar y Activar';
         });
 
-        // CREAR RESELLER SEGURO (Solo Admin)
+        // ================= CREAR RESELLER =================
         document.getElementById('reseller-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(session.role !== 'admin') return;
 
             const resellerEmail = document.getElementById('reseller_user').value.trim(); 
             const resellerPass = document.getElementById('reseller_pass').value.trim();
-            const credits = parseInt(document.getElementById('credits').value, 10);
-
-            if(!resellerEmail.includes('@')) {
-                showAlert("Para mayor seguridad, el usuario del reseller debe tener formato de correo (Ej. juan@reseller.com)", true);
-                return;
-            }
+            const credits = parseInt(document.getElementById('credits').value, 10) || 0; 
 
             try {
+                await setPersistence(secondaryAuth, inMemoryPersistence);
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, resellerEmail, resellerPass);
                 const newResellerUID = userCredential.user.uid;
 
                 await set(ref(db, `users/${newResellerUID}`), {
                     email: resellerEmail,
+                    password: resellerPass,
                     role: 'reseller',
                     credits: credits,
                     createdAt: new Date().toISOString()
                 });
 
                 await signOut(secondaryAuth);
-
                 showAlert(`¡Reseller <strong>${resellerEmail}</strong> creado con ${credits} créditos!`);
                 document.getElementById('reseller-form').reset();
+                loadResellersData();
             } catch (error) {
-                let msg = "Error al crear reseller.";
-                if(error.code === 'auth/email-already-in-use') msg = "Este usuario (correo) ya existe.";
-                if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres.";
-                showAlert(msg, true);
-                console.error(error);
+                showAlert("Error al crear reseller: " + error.message, true);
             }
         });
 
+        // ================= CARGAR DATOS EN TABLAS =================
         async function loadClientsData() {
             const tbody = document.querySelector('#clients-table tbody');
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Cargando...</td></tr>';
             try {
-                const snapshot = await get(child(ref(db), 'codes'));
+                const snapshot = await get(ref(db, 'codes'));
                 tbody.innerHTML = '';
                 let count = 0;
                 
@@ -690,37 +836,233 @@
 
                     for (const key in codes) {
                         const client = codes[key];
-                        if (session.role === 'reseller' && client.createdBy !== session.email) continue; 
-                        
-                        count++;
-                        const expDate = new Date(client.expiresAt);
-                        const isExpired = now > client.expiresAt;
-                        const statusBadge = isExpired ? '<span class="badge badge-expired">Vencido</span>' : '<span class="badge badge-active">Activo</span>';
+                        if (client && typeof client === 'object') {
+                            if (session.role === 'reseller' && client.createdBy !== session.email) continue; 
+                            
+                            count++;
+                            const expDate = new Date(client.expiresAt);
+                            const isExpired = now > client.expiresAt;
+                            const statusBadge = isExpired ? '<span class="badge badge-expired">Vencido</span>' : '<span class="badge badge-active">Activo</span>';
+                            
+                            // Botones de acción
+                            const actionBtns = `
+                                <button class="btn btn-sm btn-info" onclick="openEditClient('${key}', '${client.username}', '${client.password}', ${client.expiresAt})" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteClient('${key}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            `;
 
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${key}</strong></td>
-                                <td>${client.username}</td>
-                                <td>${client.password}</td>
-                                <td>${client.package}</td>
-                                <td>${expDate.toLocaleDateString()} ${expDate.toLocaleTimeString()}</td>
-                                <td>${statusBadge}</td>
-                            </tr>
-                        `;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${key}</strong></td>
+                                    <td>${client.username || 'N/A'}</td>
+                                    <td>${client.password || 'N/A'}</td>
+                                    <td>${client.package || 'N/A'}</td>
+                                    <td>${expDate.toLocaleDateString()} ${expDate.toLocaleTimeString()}</td>
+                                    <td>${statusBadge}</td>
+                                    <td>${actionBtns}</td>
+                                </tr>
+                            `;
+                        }
                     }
                 }
-                
-                if(count === 0) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Sin clientes.</td></tr>';
+                if(count === 0) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Sin clientes.</td></tr>';
                 document.getElementById('stat-total-clients').innerText = count;
                 
             } catch (error) {
-                console.error(error);
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error cargando datos de seguridad.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar datos.</td></tr>`;
             }
         }
+
+        async function loadResellersData() {
+            if(session.role !== 'admin') return;
+            const tbody = document.querySelector('#resellers-table tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando...</td></tr>';
+            
+            try {
+                const snapshot = await get(ref(db, 'users'));
+                tbody.innerHTML = '';
+                let count = 0;
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    for (const key in users) {
+                        const u = users[key];
+                        if (u && typeof u === 'object' && u.role === 'reseller') {
+                            count++;
+                            const cDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A';
+                            
+                            const actionBtns = `
+                                <button class="btn btn-sm btn-info" onclick="openEditReseller('${key}', '${u.password || ''}')" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="openManageCredits('${key}', ${u.credits || 0})" title="Créditos"><i class="fas fa-coins"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteReseller('${key}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            `;
+
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${u.email || 'N/A'}</strong></td>
+                                    <td>${u.password || 'Oculta'}</td>
+                                    <td>${u.credits || 0}</td>
+                                    <td>${cDate}</td>
+                                    <td>${actionBtns}</td>
+                                </tr>
+                            `;
+                        }
+                    }
+                }
+                if(count === 0) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Sin resellers.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar resellers.</td></tr>`;
+            }
+        }
+
+        // ================= LOGICA DE EDICIÓN Y BORRADO (CLIENTES) =================
         
-        // Hacemos global la función para que el botón de actualizar funcione desde el HTML
+        window.deleteClient = async (code) => {
+            if(confirm(`¿Estás seguro de ELIMINAR el cliente con código ${code}? Esto no se puede deshacer.`)) {
+                await remove(ref(db, `codes/${code}`));
+                showAlert(`Cliente ${code} eliminado con éxito.`);
+                loadClientsData();
+            }
+        };
+
+        window.openEditClient = (code, username, password, expiresAt) => {
+            document.getElementById('edit-client-old-code').value = code;
+            document.getElementById('edit-client-code').value = code;
+            document.getElementById('edit-client-username').value = username;
+            document.getElementById('edit-client-password').value = password;
+            document.getElementById('edit-client-expiresAt').value = expiresAt;
+            document.getElementById('edit-client-extend').value = "none";
+            document.getElementById('modal-edit-client').style.display = 'flex';
+        };
+
+        document.getElementById('form-edit-client').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldCode = document.getElementById('edit-client-old-code').value;
+            const newCode = document.getElementById('edit-client-code').value.trim().toUpperCase();
+            const newUsername = document.getElementById('edit-client-username').value.trim();
+            const newPassword = document.getElementById('edit-client-password').value.trim();
+            const extendVal = document.getElementById('edit-client-extend').value;
+            const selectEl = document.getElementById('edit-client-extend');
+            const cost = parseInt(selectEl.options[selectEl.selectedIndex].getAttribute('data-cost'));
+            let currentExpiresAt = parseInt(document.getElementById('edit-client-expiresAt').value);
+
+            // Validar créditos si extiende
+            if (extendVal !== "none" && session.role === 'reseller' && session.credits < cost) {
+                alert(`Créditos insuficientes para extender. Necesitas ${cost}.`);
+                return;
+            }
+
+            try {
+                // Obtener los datos originales
+                const snapOld = await get(ref(db, `codes/${oldCode}`));
+                let clientData = snapOld.val();
+
+                // Actualizar datos básicos
+                clientData.username = newUsername;
+                clientData.password = newPassword;
+
+                // Si hay extensión de tiempo
+                if (extendVal !== "none") {
+                    clientData.expiresAt = getExpirationTime(extendVal, currentExpiresAt);
+                    clientData.package = clientData.package + " + " + extendVal; // Actualizar label de paquete
+                    
+                    // Cobrar créditos al reseller
+                    if (session.role === 'reseller' && cost > 0) {
+                        session.credits -= cost;
+                        await update(ref(db, `users/${session.uid}`), { credits: session.credits });
+                        updateCreditsUI();
+                    }
+                }
+
+                // Si cambió el código
+                if (oldCode !== newCode) {
+                    const snapNew = await get(ref(db, `codes/${newCode}`));
+                    if(snapNew.exists()) {
+                        alert("Error: El nuevo código de acceso ya está en uso por otro cliente.");
+                        return;
+                    }
+                    // Mover nodo
+                    await set(ref(db, `codes/${newCode}`), clientData);
+                    await remove(ref(db, `codes/${oldCode}`));
+                } else {
+                    // Actualizar mismo nodo
+                    await update(ref(db, `codes/${oldCode}`), clientData);
+                }
+
+                closeModal('modal-edit-client');
+                showAlert(`Cliente actualizado correctamente.`);
+                loadClientsData();
+
+            } catch(e) {
+                alert("Error al actualizar: " + e.message);
+            }
+        });
+
+
+        // ================= LOGICA DE EDICIÓN Y BORRADO (RESELLERS) =================
+        
+        window.deleteReseller = async (uid) => {
+            if(confirm(`¿Estás súper seguro de ELIMINAR a este reseller? Perderá el acceso de inmediato.`)) {
+                await remove(ref(db, `users/${uid}`));
+                showAlert(`Reseller eliminado correctamente.`);
+                loadResellersData();
+            }
+        };
+
+        window.openEditReseller = (uid, password) => {
+            document.getElementById('edit-reseller-uid').value = uid;
+            document.getElementById('edit-reseller-password').value = password;
+            document.getElementById('modal-edit-reseller').style.display = 'flex';
+        };
+
+        document.getElementById('form-edit-reseller').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const uid = document.getElementById('edit-reseller-uid').value;
+            const newPassword = document.getElementById('edit-reseller-password').value;
+
+            try {
+                await update(ref(db, `users/${uid}`), { password: newPassword });
+                closeModal('modal-edit-reseller');
+                showAlert(`Datos de reseller actualizados.`);
+                loadResellersData();
+            } catch(e) { alert("Error: " + e.message); }
+        });
+
+        window.openManageCredits = (uid, currentCredits) => {
+            document.getElementById('manage-credits-uid').value = uid;
+            document.getElementById('manage-credits-current').value = currentCredits;
+            document.getElementById('display-current-credits').innerText = currentCredits;
+            document.getElementById('manage-credits-amount').value = "";
+            document.getElementById('modal-manage-credits').style.display = 'flex';
+        };
+
+        document.getElementById('form-manage-credits').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const uid = document.getElementById('manage-credits-uid').value;
+            const action = document.getElementById('manage-credits-action').value;
+            const amount = parseInt(document.getElementById('manage-credits-amount').value);
+            let current = parseInt(document.getElementById('manage-credits-current').value);
+
+            if(isNaN(amount) || amount <= 0) return;
+
+            let newTotal = action === 'add' ? current + amount : current - amount;
+            if (newTotal < 0) newTotal = 0; // Evitar saldo negativo
+
+            try {
+                await update(ref(db, `users/${uid}`), { credits: newTotal });
+                closeModal('modal-manage-credits');
+                showAlert(`Créditos actualizados con éxito.`);
+                loadResellersData();
+            } catch(e) { alert("Error al cambiar créditos: " + e.message); }
+        });
+
+        // Utilidades para cerrar modales
+        window.closeModal = (modalId) => {
+            document.getElementById(modalId).style.display = 'none';
+        };
+
+        // Exportar a global scope para onclick HTML
         window.loadClientsData = loadClientsData;
+        window.loadResellersData = loadResellersData;
     </script>
 </body>
 </html>
